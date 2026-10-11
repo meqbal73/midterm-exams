@@ -1,0 +1,23 @@
+{
+ "courses": ["CPIT-345", "CPIT-405", "CPIT-470", "CPIT-475", "CPIT-490"],
+ "names": {
+  "CPIT-405": "تطبيقات الشبكة البينية",
+  "CPIT-470": "إدارة الشبكات",
+  "CPIT-475": "شبكات البيانات اللاسلكية",
+  "CPIT-490": "مواضيع مختارة في تقنية المعلومات"
+ },
+ "exams": [
+  { "code": "CPIT-405", "date": "2026-10-22", "hijri": "11/05/1448", "start": "09:00", "end": "10:30", "building": "80A", "room": "H1-7 + H2-4" },
+  { "code": "CPIT-345", "date": "2026-10-25", "hijri": "14/05/1448", "start": "13:00", "end": "14:30", "building": "80A", "room": "H1-3 + H2-6" },
+  { "code": "CPIT-490", "date": "2026-10-26", "hijri": "15/05/1448", "start": "13:00", "end": "14:30", "building": "80A", "room": "H2-7" },
+  { "code": "CPIT-475", "date": "2026-10-27", "hijri": "16/05/1448", "start": "15:00", "end": "16:30", "building": "80A", "room": "H1-3" },
+  { "code": "CPIT-470", "date": "2026-10-29", "hijri": "18/05/1448", "start": "13:00", "end": "14:30", "building": "80A", "room": "H2-8" }
+ ],
+ "tasks": [
+  { "code": "CPIT-475", "title": "New Assignment", "due": "2026-10-12T23:59", "grade": "" },
+  { "code": "CPIT-470", "title": "LAB-4-Ch6", "due": "2026-10-15T23:59", "grade": "2.5" },
+  { "code": "CPIT-490", "title": "LAB3-M3", "due": "2026-10-18T23:59", "grade": "4" },
+  { "code": "CPIT-405", "title": "Lab 5", "due": "2026-10-21T10:00", "grade": "" },
+  { "code": "CPIT-405", "title": "Lab 6", "due": "2026-10-28T10:00", "grade": "" }
+ ]
+}

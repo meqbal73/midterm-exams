@@ -2,312 +2,538 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>جدول اختباراتي - Mid Term</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>جدولي الدراسي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=Readex+Pro:wght@500;700&display=swap" rel="stylesheet">
 <style>
+
+  /* Layout: one narrow column; tabs switch between exams and deliverables; an "add" drawer reads screenshots or text */
   :root {
-    --bg: #f4f1ea;
+    --bg: #eaefee;
     --card: #ffffff;
-    --ink: #1c1f24;
-    --muted: #6b6f76;
-    --line: #e3ded3;
-    --accent: #0f6e5c;
-    --accent-soft: #e2f1ec;
-    --soon: #b4541a;
-    --soon-soft: #fbeadf;
+    --ink: #13201c;
+    --muted: #5b6a65;
+    --line: #d5dedb;
+    --accent: #0f5f4c;
+    --accent-ink: #ffffff;
+    --accent-soft: #dcece6;
+    --warn: #b0501a;
+    --warn-soft: #f8e4d6;
+    --danger: #b3261e;
+    --font-display: "Readex Pro", "IBM Plex Sans Arabic", system-ui, sans-serif;
+    --font-body: "IBM Plex Sans Arabic", system-ui, sans-serif;
   }
   @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #14161a;
-      --card: #1d2026;
-      --ink: #eceae4;
-      --muted: #9a9ea6;
-      --line: #2c3038;
-      --accent: #5cc4a8;
-      --accent-soft: #1b3330;
-      --soon: #f0a06c;
-      --soon-soft: #3a2619;
+    :root:not([data-theme="light"]) {
+      --bg: #101614; --card: #19211e; --ink: #e6ece9; --muted: #95a39e; --line: #2a3531;
+      --accent: #5cc7a6; --accent-ink: #08201a; --accent-soft: #1b3229;
+      --warn: #f0a26e; --warn-soft: #3a261a; --danger: #f2827a;
+      color-scheme: dark;
     }
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root[data-theme="dark"] {
+    --bg: #101614; --card: #19211e; --ink: #e6ece9; --muted: #95a39e; --line: #2a3531;
+    --accent: #5cc7a6; --accent-ink: #08201a; --accent-soft: #1b3229;
+    --warn: #f0a26e; --warn-soft: #3a261a; --danger: #f2827a;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
   body {
-    font-family: "IBM Plex Sans Arabic", system-ui, sans-serif;
+    margin: 0;
+    font-family: var(--font-body);
     background: var(--bg);
     color: var(--ink);
-    padding: 32px 16px 48px;
     line-height: 1.6;
+    padding-inline: 16px;
+    padding-block: 28px 48px;
   }
-  .wrap { max-width: 640px; margin: 0 auto; }
-  header { margin-bottom: 28px; }
-  header p { color: var(--muted); font-size: 14px; }
-  h1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
-  .next {
-    background: var(--accent);
-    color: #fff;
-    border-radius: 16px;
-    padding: 18px 20px;
-    margin-bottom: 24px;
+  .wrap { max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+  header { display: flex; align-items: end; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  h1 { font-family: var(--font-display); font-size: 30px; margin: 0; line-height: 1.2; text-wrap: balance; }
+  header p { margin: 2px 0 0; color: var(--muted); font-size: 14px; }
+  button { font: inherit; cursor: pointer; }
+  button:focus-visible, textarea:focus-visible, label:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .btn {
+    border: 0; border-radius: 10px; padding: 10px 16px; font-weight: 500; font-size: 15px;
+    background: var(--accent); color: var(--accent-ink);
   }
-  .next small { opacity: .85; font-size: 13px; }
-  .next strong { display: block; font-size: 22px; margin: 2px 0; }
-  .list { display: flex; flex-direction: column; gap: 12px; }
-  .exam {
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 16px 18px;
-    display: grid;
-    grid-template-columns: 64px 1fr auto;
-    gap: 14px;
-    align-items: center;
-  }
-  .date-box {
-    text-align: center;
-    background: var(--accent-soft);
-    color: var(--accent);
-    border-radius: 10px;
-    padding: 6px 0;
-  }
-  .date-box .d { font-size: 24px; font-weight: 700; line-height: 1.1; }
-  .date-box .m { font-size: 12px; }
-  .code { font-size: 18px; font-weight: 700; direction: ltr; text-align: right; }
-  .meta { color: var(--muted); font-size: 14px; }
-  .time { font-size: 15px; font-weight: 500; color: var(--ink); }
-  .cname { font-size: 13px; color: var(--muted); margin-bottom: 2px; }
-  .task-title { font-size: 16px; font-weight: 700; }
-  .tabs {
-    display: flex;
-    gap: 6px;
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 4px;
-    margin-bottom: 20px;
-  }
-  .tab {
-    flex: 1;
-    font: inherit;
-    font-size: 15px;
-    font-weight: 500;
-    border: 0;
-    background: transparent;
-    color: var(--muted);
-    padding: 10px;
-    border-radius: 9px;
-    cursor: pointer;
-  }
-  .tab[aria-selected="true"] { background: var(--accent); color: #fff; }
-  .count {
-    display: inline-block;
-    min-width: 20px;
-    font-size: 12px;
-    padding: 0 6px;
-    border-radius: 999px;
-    background: var(--soon);
-    color: #fff;
-    margin-inline-start: 4px;
-  }
+  .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  .btn:disabled { opacity: .5; cursor: default; }
+
+  .tabs { display: flex; gap: 4px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 4px; }
+  .tab { flex: 1; border: 0; background: transparent; color: var(--muted); padding: 10px; border-radius: 9px; font-weight: 500; font-size: 15px; }
+  .tab[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); }
+  .count { display: inline-block; min-width: 20px; font-size: 12px; padding: 0 6px; border-radius: 999px; background: var(--warn); color: var(--card); margin-inline-start: 4px; font-variant-numeric: tabular-nums; }
   .count:empty { display: none; }
-  .panel[hidden] { display: none; }
-  .badge {
-    font-size: 13px;
-    font-weight: 500;
-    padding: 4px 10px;
-    border-radius: 999px;
-    background: var(--accent-soft);
-    color: var(--accent);
-    white-space: nowrap;
+
+  .next { background: var(--accent); color: var(--accent-ink); border-radius: 16px; padding: 18px 20px; }
+  .next small { opacity: .85; font-size: 13px; display: block; }
+  .next strong { display: block; font-family: var(--font-display); font-size: 22px; margin: 2px 0; }
+
+  .list { display: flex; flex-direction: column; gap: 10px; }
+  .item {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 14px 16px; display: grid; grid-template-columns: 60px 1fr auto; gap: 14px; align-items: center;
   }
-  .exam.soon .badge { background: var(--soon-soft); color: var(--soon); }
-  .exam.soon .date-box { background: var(--soon-soft); color: var(--soon); }
-  .exam.done { opacity: .45; }
-  .exam.done .badge { background: var(--line); color: var(--muted); }
-  footer { margin-top: 28px; color: var(--muted); font-size: 12px; text-align: center; }
+  .item > div { min-width: 0; }
+  .datebox { text-align: center; background: var(--accent-soft); color: var(--accent); border-radius: 10px; padding: 6px 0; font-variant-numeric: tabular-nums; }
+  .datebox .d { font-family: var(--font-display); font-size: 24px; font-weight: 700; line-height: 1.1; }
+  .datebox .m { font-size: 12px; }
+  .cname { font-size: 13px; color: var(--muted); }
+  .title { font-size: 17px; font-weight: 700; direction: ltr; text-align: right; overflow-wrap: anywhere; }
+  .meta { color: var(--muted); font-size: 14px; }
+  .time { font-size: 15px; font-weight: 500; }
+  .side { display: flex; flex-direction: column; align-items: end; gap: 6px; }
+  .badge { font-size: 13px; font-weight: 500; padding: 3px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); white-space: nowrap; }
+  .del { border: 0; background: transparent; color: var(--muted); font-size: 12px; padding: 2px 4px; }
+  .del.armed { color: var(--danger); font-weight: 700; }
+  .item.soon .badge, .item.soon .datebox { background: var(--warn-soft); color: var(--warn); }
+  .item.done { opacity: .5; }
+  .item.done .badge { background: var(--line); color: var(--muted); }
+  .empty { color: var(--muted); text-align: center; padding: 24px; border: 1px dashed var(--line); border-radius: 14px; }
+  .foot { color: var(--muted); font-size: 12px; text-align: center; }
+
+  /* add drawer */
+  .add { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .add h2 { font-family: var(--font-display); font-size: 18px; margin: 0; }
+  .add p.hint { margin: 0; color: var(--muted); font-size: 14px; }
+  .drop {
+    display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center;
+    border: 2px dashed var(--line); border-radius: 12px; padding: 18px; color: var(--muted); cursor: pointer;
+  }
+  .drop.over { border-color: var(--accent); color: var(--accent); }
+  .drop strong { color: var(--ink); }
+  .drop input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+  .thumbs { display: flex; flex-wrap: wrap; gap: 8px; }
+  .thumb { position: relative; width: 72px; height: 72px; border-radius: 8px; overflow: hidden; border: 1px solid var(--line); }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .thumb button { position: absolute; top: 2px; inset-inline-start: 2px; border: 0; border-radius: 6px; background: var(--card); color: var(--ink); font-size: 12px; padding: 0 6px; }
+  textarea {
+    width: 100%; min-height: 96px; resize: vertical; font: inherit; font-size: 15px;
+    background: var(--bg); color: var(--ink); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px;
+  }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .status { font-size: 14px; color: var(--muted); }
+  .status.err { color: var(--danger); }
+
+  .found { display: flex; flex-direction: column; gap: 8px; }
+  .found label { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: start; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; }
+  .found label > span { min-width: 0; }
+  .found input { margin-top: 5px; accent-color: var(--accent); }
+  .tag { font-size: 12px; padding: 1px 8px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); white-space: nowrap; }
+  .tag.upd { background: var(--warn-soft); color: var(--warn); }
+  .kind { font-size: 12px; color: var(--muted); }
+
+  .toast { position: fixed; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); inset-inline: 16px; margin: 0 auto; max-width: 420px; background: var(--ink); color: var(--bg); padding: 10px 14px; border-radius: 10px; text-align: center; font-size: 14px; }
+
   @media (max-width: 420px) {
-    .exam { grid-template-columns: 56px 1fr; }
-    .badge { grid-column: 1 / -1; justify-self: start; }
+    .item { grid-template-columns: 54px 1fr; }
+    .side { grid-column: 1 / -1; flex-direction: row; justify-content: space-between; align-items: center; }
   }
+  @media (prefers-reduced-motion: no-preference) { .tab, .btn { transition: background .15s, color .15s; } }
+  .keyin { flex: 1; min-width: 0; font: inherit; font-size: 15px; background: var(--bg); color: var(--ink); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <h1>جدولي</h1>
-    <p>الفصل الأول 2027-01 · مرتب حسب الموعد</p>
+    <div>
+      <h1>جدولي</h1>
+      <p>الفصل الأول 2027-01 · بتوقيت السعودية</p>
+    </div>
+    <button class="btn" id="openAdd" hidden>+ أضف من صورة أو نص</button>
   </header>
 
+  <section class="add" id="addBox" hidden>
+    <h2>إضافة مواعيد جديدة</h2>
+    <p class="hint">ارفع صورة جدول الاختبارات أو صفحة Blackboard، أو الصق النص. يطلع لك اللي لقيته تراجعه قبل الحفظ.</p>
+    <div class="row" id="keyRow" hidden>
+      <input type="password" id="keyIn" class="keyin" placeholder="رمز التعديل" autocomplete="current-password">
+    </div>
+    <label class="drop" id="drop" for="fileIn">
+      <strong>اختر صورة أو اسحبها هنا</strong>
+      <span>تقدر تختار أكثر من صورة</span>
+      <input type="file" id="fileIn" accept="image/*" multiple>
+    </label>
+    <div class="thumbs" id="thumbs"></div>
+    <textarea id="textIn" placeholder="أو الصق النص هنا (تقدر تلصق صورة هنا بعد)"></textarea>
+    <div class="row">
+      <button class="btn" id="readBtn">اقرأ</button>
+      <button class="btn ghost" id="closeAdd">إغلاق</button>
+      <span class="status" id="status"></span>
+    </div>
+    <div class="found" id="found" hidden></div>
+    <div class="row" id="foundActions" hidden>
+      <button class="btn" id="saveBtn">احفظ المحدد</button>
+      <button class="btn ghost" id="discardBtn">تجاهل</button>
+    </div>
+  </section>
+
   <nav class="tabs" role="tablist">
-    <button class="tab" role="tab" data-tab="exams">الاختبارات</button>
-    <button class="tab" role="tab" data-tab="tasks">التسليمات <span class="count" id="taskCount"></span></button>
+    <button class="tab" role="tab" id="tab-exams" data-tab="exams">الاختبارات</button>
+    <button class="tab" role="tab" id="tab-tasks" data-tab="tasks">التسليمات <span class="count" id="taskCount"></span></button>
   </nav>
 
-  <section class="panel" id="panel-exams">
-    <div class="next" id="next"></div>
-    <div class="list" id="list"></div>
-    <footer>المبنى: 80A · الجدول نسخة مبدئية (Draft)، راجع الجدول الرسمي قبل الاختبار</footer>
+  <section id="panel-exams">
+    <div class="list">
+      <div class="next" id="nextExam"></div>
+      <div class="list" id="examList"></div>
+      <p class="foot">جدول الاختبارات نسخة مبدئية (Draft). راجع الجدول الرسمي قبل الاختبار.</p>
+    </div>
   </section>
 
-  <section class="panel" id="panel-tasks">
-    <div class="next" id="nextTask"></div>
-    <div class="list" id="taskList"></div>
-    <footer>المصدر: Blackboard · بتوقيت السعودية</footer>
+  <section id="panel-tasks" hidden>
+    <div class="list">
+      <div class="next" id="nextTask"></div>
+      <div class="list" id="taskList"></div>
+      <p class="foot">المصدر: Blackboard</p>
+    </div>
   </section>
 </div>
+<div class="toast" id="toast" hidden></div>
 
 <script>
-  // عدّل هنا فقط: التاريخ بصيغة YYYY-MM-DD والوقت بصيغة HH:MM (24 ساعة)
-  const exams = [
-    { code: "CPIT-405", date: "2026-10-22", hijri: "11/05/1448", time: "09:00", end: "10:30", place: "80A", room: "H1-7 + H2-4" },
-    { code: "CPIT-345", date: "2026-10-25", hijri: "14/05/1448", time: "13:00", end: "14:30", place: "80A", room: "H1-3 + H2-6" },
-    { code: "CPIT-490", date: "2026-10-26", hijri: "15/05/1448", time: "13:00", end: "14:30", place: "80A", room: "H2-7" },
-    { code: "CPIT-475", date: "2026-10-27", hijri: "16/05/1448", time: "15:00", end: "16:30", place: "80A", room: "H1-3" },
-    { code: "CPIT-470", date: "2026-10-29", hijri: "18/05/1448", time: "13:00", end: "14:30", place: "80A", room: "H2-8" },
-  ];
+let state = { courses: [], names: {}, exams: [], tasks: [] };
+let apiOK = false, aiOK = false, needsKey = false;
 
-  const days = ["الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
-  const months = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+const DAYS = ["الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+const MONTHS = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
-  function fmtTime(t) {
-    if (!t) return "الوقت: يحدد لاحقاً";
-    let [h, m] = t.split(":").map(Number);
-    const p = h < 12 ? "صباحاً" : "مساءً";
-    h = h % 12 || 12;
-    return `${h}:${String(m).padStart(2,"0")} ${p}`;
-  }
+// ---------- time helpers (Riyadh, UTC+3) ----------
+const riyadh = s => new Date(s + (s.length === 10 ? "T00:00" : "") + ":00+03:00");
+const riyadhToday = () => new Date(Date.now() + 3 * 3600000).toISOString().slice(0, 10);
+function fmtTime(t) {
+  if (!t) return "";
+  let [h, m] = t.split(":").map(Number);
+  const p = h < 12 ? "ص" : "م";
+  h = h % 12 || 12;
+  return `<bdi>${h}:${String(m).padStart(2, "0")} ${p}</bdi>`;
+}
+function dparts(ymd) {
+  const [y, m, d] = ymd.split("-").map(Number);
+  const wd = new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+  return { y, m, d, wd, label: `${DAYS[wd]} ${String(d).padStart(2,"0")}/${String(m).padStart(2,"0")}/${y}` };
+}
+function leftText(ms) {
+  const h = Math.floor(ms / 3600000);
+  if (h < 1) return `باقي ${Math.max(1, Math.floor(ms / 60000))} دقيقة`;
+  if (h < 48) return `باقي ${h} ساعة`;
+  return `باقي ${Math.floor(h / 24)} يوم`;
+}
+const dayDiff = ymd => Math.round((Date.parse(ymd) - Date.parse(riyadhToday())) / 86400000);
+const nameOf = (code, own) => own || state.names?.[code] || "";
+const examKey = e => e.code;
+const taskKey = t => (t.code + "|" + t.title).toLowerCase().replace(/\s+/g, "");
 
-  const today = new Date(); today.setHours(0,0,0,0);
+// ---------- render ----------
+function render() {
+  renderExams();
+  renderTasks();
+  $("openAdd").hidden = !(apiOK && aiOK) || !$("addBox").hidden;
+}
+const delButton = (kind, key) => apiOK ? `<button class="del" data-kind="${kind}" data-key="${esc(key)}">حذف</button>` : "";
 
-  const sorted = [...exams].sort((a, b) => {
-    if (!a.date) return 1; if (!b.date) return -1;
-    return (a.date + (a.time||"")).localeCompare(b.date + (b.time||""));
-  });
-
-  const list = document.getElementById("list");
+function renderExams() {
+  const list = $("examList"); list.innerHTML = "";
+  const items = [...state.exams].sort((a, b) => (a.date + a.start).localeCompare(b.date + b.start));
   let next = null;
-
-  sorted.forEach(e => {
+  if (!items.length) list.innerHTML = `<div class="empty">ما فيه اختبارات محفوظة. أضفها من صورة الجدول.</div>`;
+  for (const e of items) {
+    const p = dparts(e.date);
+    const diff = dayDiff(e.date);
+    const endMs = riyadh(e.date + "T" + (e.end || "23:59")) - Date.now();
+    let cls = "", badge;
+    if (endMs < 0) { cls = "done"; badge = "انتهى"; }
+    else if (diff <= 0) { cls = "soon"; badge = "اليوم"; }
+    else if (diff === 1) { cls = "soon"; badge = "بكرة"; }
+    else { if (diff <= 3) cls = "soon"; badge = `بعد ${diff} يوم`; }
+    if (endMs >= 0 && !next) next = { e, p, badge };
     const el = document.createElement("div");
-    el.className = "exam";
-    if (!e.date) {
-      el.innerHTML = `
-        <div class="date-box"><div class="d">?</div><div class="m">—</div></div>
-        <div><div class="code">${e.code}</div><div class="meta">الموعد غير محدد بعد</div></div>
-        <span class="badge">—</span>`;
-      list.appendChild(el); return;
-    }
-    const d = new Date(e.date + "T00:00:00");
-    const diff = Math.round((d - today) / 86400000);
-    let badge;
-    if (diff < 0) { el.classList.add("done"); badge = "انتهى"; }
-    else if (diff === 0) { el.classList.add("soon"); badge = "اليوم"; }
-    else if (diff === 1) { el.classList.add("soon"); badge = "بكرة"; }
-    else { if (diff <= 3) el.classList.add("soon"); badge = `بعد ${diff} يوم`; }
-    if (diff >= 0 && !next) next = { ...e, d, diff };
-
+    el.className = "item " + cls;
     el.innerHTML = `
-      <div class="date-box"><div class="d">${d.getDate()}</div><div class="m">${months[d.getMonth()]}</div></div>
+      <div class="datebox"><div class="d">${p.d}</div><div class="m">${MONTHS[p.m - 1]}</div></div>
       <div>
-        <div class="code">${e.code}</div>
-        <div class="meta">${days[d.getDay()]} ${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()} · ${e.hijri}هـ</div>
-        <div class="time">${fmtTime(e.time)} – ${fmtTime(e.end)}</div>
-        <div class="meta">مبنى ${e.place} · <span dir="ltr">${e.room}</span></div>
+        <div class="cname">${esc(nameOf(e.code, e.name))}</div>
+        <div class="title">${esc(e.code)}</div>
+        <div class="meta">${p.label}${e.hijri ? ` · <bdi>${esc(e.hijri)}هـ</bdi>` : ""}</div>
+        <div class="time">${e.start ? fmtTime(e.start) + (e.end ? " – " + fmtTime(e.end) : "") : "الوقت غير محدد"}</div>
+        <div class="meta">${e.building ? "مبنى <bdi>" + esc(e.building) + "</bdi>" : ""}${e.room ? ` · <span dir="ltr">${esc(e.room)}</span>` : ""}</div>
       </div>
-      <span class="badge">${badge}</span>`;
+      <div class="side"><span class="badge">${badge}</span>${delButton("exams", examKey(e))}</div>`;
     list.appendChild(el);
-  });
-
-  const n = document.getElementById("next");
-  if (next) {
-    const when = next.diff === 0 ? "اليوم" : next.diff === 1 ? "بكرة" : `بعد ${next.diff} يوم`;
-    n.innerHTML = `<small>الاختبار الجاي · ${when}</small>
-      <strong>${next.code}</strong>
-      <small>${days[next.d.getDay()]} ${next.d.getDate()} ${months[next.d.getMonth()]} · ${fmtTime(next.time)} – ${fmtTime(next.end)} · <span dir="ltr">${next.room}</span></small>`;
-  } else {
-    n.innerHTML = `<strong>خلصت الاختبارات 🎉</strong>`;
   }
+  $("nextExam").innerHTML = next
+    ? `<small>الاختبار الجاي · ${next.badge}</small><strong dir="ltr" style="text-align:right">${esc(next.e.code)}</strong>
+       <small>${DAYS[next.p.wd]} ${next.p.d} ${MONTHS[next.p.m - 1]} · ${fmtTime(next.e.start)}${next.e.end ? " – " + fmtTime(next.e.end) : ""}${next.e.room ? ` · <span dir="ltr">${esc(next.e.room)}</span>` : ""}</small>`
+    : `<strong>ما عليك اختبارات جاية</strong>`;
+}
 
-  // ===== التسليمات =====
-  // due بصيغة YYYY-MM-DDTHH:MM (بتوقيت السعودية)
-  const tasks = [
-    { code: "CPIT-475", title: "New Assignment", due: "2026-10-12T23:59" },
-    { code: "CPIT-470", title: "LAB-4-Ch6", grade: "2.5", due: "2026-10-15T23:59" },
-    { code: "CPIT-490", title: "LAB3-M3",  grade: "4",   due: "2026-10-18T23:59" },
-    { code: "CPIT-405", title: "Lab 5",                  due: "2026-10-21T10:00" },
-    { code: "CPIT-405", title: "Lab 6",                  due: "2026-10-28T10:00" },
-  ];
-
-  const names = {
-    "CPIT-405": "تطبيقات الشبكة البينية",
-    "CPIT-470": "إدارة الشبكات",
-    "CPIT-475": "شبكات البيانات اللاسلكية",
-    "CPIT-490": "مواضيع مختارة في تقنية المعلومات",
-  };
-
-  // أسماء المواد في بطاقات الاختبارات
-  document.querySelectorAll("#list .code").forEach(c => {
-    const nm = names[c.textContent.trim()];
-    if (nm) c.insertAdjacentHTML("beforebegin", `<div class="cname">${nm}</div>`);
-  });
-
-  const now = new Date();
-  const taskList = document.getElementById("taskList");
-  let nextTask = null, pending = 0;
-
-  function leftText(ms) {
-    const h = Math.floor(ms / 3600000);
-    if (h < 1) return `باقي ${Math.max(1, Math.floor(ms / 60000))} دقيقة`;
-    if (h < 48) return `باقي ${h} ساعة`;
-    return `باقي ${Math.floor(h / 24)} يوم`;
-  }
-
-  [...tasks].sort((a, b) => a.due.localeCompare(b.due)).forEach(t => {
-    const d = new Date(t.due + ":00+03:00");
-    const ms = d - now;
+function renderTasks() {
+  const list = $("taskList"); list.innerHTML = "";
+  const items = [...state.tasks].sort((a, b) => a.due.localeCompare(b.due));
+  let next = null, pending = 0;
+  if (!items.length) list.innerHTML = `<div class="empty">ما فيه تسليمات محفوظة. أضفها من صورة Blackboard.</div>`;
+  for (const t of items) {
+    const ms = riyadh(t.due) - Date.now();
+    const p = dparts(t.due.slice(0, 10));
+    let cls = "", badge;
+    if (ms < 0) { cls = "done"; badge = "انتهى"; }
+    else { pending++; if (ms < 3 * 86400000) cls = "soon"; badge = leftText(ms); if (!next) next = { t, p, ms }; }
     const el = document.createElement("div");
-    el.className = "exam";
-    let badge;
-    if (ms < 0) { el.classList.add("done"); badge = "انتهى"; }
-    else {
-      pending++;
-      if (ms < 3 * 86400000) el.classList.add("soon");
-      badge = leftText(ms);
-      if (!nextTask) nextTask = { ...t, d, ms };
-    }
-    const [hh, mm] = t.due.slice(11).split(":");
+    el.className = "item " + cls;
     el.innerHTML = `
-      <div class="date-box"><div class="d">${d.getDate()}</div><div class="m">${months[d.getMonth()]}</div></div>
+      <div class="datebox"><div class="d">${p.d}</div><div class="m">${MONTHS[p.m - 1]}</div></div>
       <div>
-        <div class="cname">${names[t.code] || ""}</div>
-        <div class="task-title" dir="ltr" style="text-align:right">${t.code} · ${t.title}</div>
-        <div class="meta">${days[d.getDay()]} ${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()}</div>
-        <div class="time">آخر موعد: ${fmtTime(hh + ":" + mm)}${t.grade ? ` · <span class="meta">الدرجة ${t.grade}</span>` : ""}</div>
+        <div class="cname">${esc(nameOf(t.code, t.name))}</div>
+        <div class="title">${esc(t.code)} · ${esc(t.title)}</div>
+        <div class="meta">${p.label}</div>
+        <div class="time">آخر موعد ${fmtTime(t.due.slice(11))}${t.grade ? ` <span class="meta">· الدرجة ${esc(t.grade)}</span>` : ""}</div>
       </div>
-      <span class="badge">${badge}</span>`;
-    taskList.appendChild(el);
+      <div class="side"><span class="badge">${badge}</span>${delButton("tasks", taskKey(t))}</div>`;
+    list.appendChild(el);
+  }
+  $("taskCount").textContent = pending || "";
+  $("nextTask").innerHTML = next
+    ? `<small>التسليم الجاي · ${leftText(next.ms)}</small><strong dir="ltr" style="text-align:right">${esc(next.t.code)} · ${esc(next.t.title)}</strong>
+       <small>${DAYS[next.p.wd]} ${next.p.d} ${MONTHS[next.p.m - 1]} · ${fmtTime(next.t.due.slice(11))}</small>`
+    : `<strong>ما عليك تسليمات جاية</strong>`;
+}
+
+// ---------- tabs ----------
+function showTab(tab) {
+  for (const b of document.querySelectorAll(".tab")) b.setAttribute("aria-selected", String(b.dataset.tab === tab));
+  $("panel-exams").hidden = tab !== "exams";
+  $("panel-tasks").hidden = tab !== "tasks";
+  try { localStorage.setItem("tab", tab); } catch (e) {}
+}
+for (const b of document.querySelectorAll(".tab")) b.addEventListener("click", () => showTab(b.dataset.tab));
+let savedTab = null; try { savedTab = localStorage.getItem("tab"); } catch (e) {}
+showTab(savedTab === "tasks" ? "tasks" : "exams");
+
+// ---------- toast / status ----------
+let toastTimer;
+function toast(msg) {
+  const t = $("toast"); t.textContent = msg; t.hidden = false;
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => (t.hidden = true), 3200);
+}
+function setStatus(msg, err) { const s = $("status"); s.textContent = msg; s.classList.toggle("err", !!err); }
+
+// ---------- API ----------
+function editKey() {
+  const typed = $("keyIn").value.trim();
+  if (typed) return typed;
+  try { return localStorage.getItem("editKey") || ""; } catch (e) { return ""; }
+}
+function rememberKey() {
+  const k = $("keyIn").value.trim();
+  if (k) try { localStorage.setItem("editKey", k); } catch (e) {}
+}
+function forgetKey() {
+  try { localStorage.removeItem("editKey"); } catch (e) {}
+  $("keyRow").hidden = false; $("addBox").hidden = false; $("openAdd").hidden = true;
+}
+async function api(path, method, body) {
+  const headers = { "content-type": "application/json" };
+  const k = editKey(); if (k) headers["x-edit-key"] = k;
+  const r = await fetch(path, { method, headers, body: body ? JSON.stringify(body) : undefined });
+  let data = null; try { data = await r.json(); } catch (e) {}
+  return { ok: r.ok, status: r.status, data };
+}
+
+async function save(next, okMsg) {
+  try {
+    const r = await api("/api/data", "PUT", next);
+    if (r.ok) { rememberKey(); state = next; render(); toast(okMsg); return true; }
+    if (r.status === 401) { forgetKey(); toast("رمز التعديل غلط"); }
+    else toast("ما انحفظ، جرب مرة ثانية");
+  } catch (e) { toast("ما فيه اتصال، جرب مرة ثانية"); }
+  return false;
+}
+
+// delete with in-page confirm (second tap)
+document.addEventListener("click", async ev => {
+  const b = ev.target.closest(".del"); if (!b) return;
+  if (!b.classList.contains("armed")) {
+    document.querySelectorAll(".del.armed").forEach(x => { x.classList.remove("armed"); x.textContent = "حذف"; });
+    b.classList.add("armed"); b.textContent = "متأكد؟"; return;
+  }
+  const { kind, key } = b.dataset;
+  const keyFn = kind === "exams" ? examKey : taskKey;
+  b.disabled = true;
+  await save({ ...state, [kind]: state[kind].filter(x => keyFn(x) !== key) }, "انحذف");
+});
+
+// ---------- add: inputs ----------
+let files = [];
+const MAX_IMAGES = 6;
+function refreshThumbs() {
+  const box = $("thumbs"); box.innerHTML = "";
+  files.forEach((f, i) => {
+    const d = document.createElement("div"); d.className = "thumb";
+    d.innerHTML = `<img alt="صورة ${i + 1}" src="${URL.createObjectURL(f)}"><button type="button" aria-label="شيل الصورة">✕</button>`;
+    d.querySelector("button").onclick = () => { files.splice(i, 1); refreshThumbs(); };
+    box.appendChild(d);
   });
+}
+function addFiles(list) {
+  for (const f of list) if (f.type.startsWith("image/") && files.length < MAX_IMAGES) files.push(f);
+  if (files.length >= MAX_IMAGES) setStatus(`الحد ${MAX_IMAGES} صور في المرة`);
+  refreshThumbs();
+}
+$("fileIn").addEventListener("change", e => { addFiles(e.target.files); e.target.value = ""; });
+const drop = $("drop");
+["dragenter", "dragover"].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.add("over"); }));
+["dragleave", "drop"].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.remove("over"); }));
+drop.addEventListener("drop", e => addFiles(e.dataTransfer.files));
+$("textIn").addEventListener("paste", e => {
+  const imgs = [...(e.clipboardData?.files || [])].filter(f => f.type.startsWith("image/"));
+  if (imgs.length) { e.preventDefault(); addFiles(imgs); }
+});
+$("openAdd").onclick = () => { $("addBox").hidden = false; $("openAdd").hidden = true; };
+$("closeAdd").onclick = () => { $("addBox").hidden = true; render(); };
 
-  document.getElementById("taskCount").textContent = pending || "";
-  const nt = document.getElementById("nextTask");
-  if (nextTask) {
-    nt.innerHTML = `<small>التسليم الجاي · ${leftText(nextTask.ms)}</small>
-      <strong dir="ltr" style="text-align:right">${nextTask.code} · ${nextTask.title}</strong>
-      <small>${days[nextTask.d.getDay()]} ${nextTask.d.getDate()} ${months[nextTask.d.getMonth()]} · ${fmtTime(nextTask.due.slice(11))}</small>`;
-  } else {
-    nt.innerHTML = `<strong>ما عليك تسليمات 🎉</strong>`;
-  }
+// shrink big screenshots before sending (keeps text readable, cuts upload size)
+async function toDataURL(file) {
+  const bmp = await createImageBitmap(file);
+  const scale = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+  const c = document.createElement("canvas");
+  c.width = Math.round(bmp.width * scale); c.height = Math.round(bmp.height * scale);
+  c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
+  return c.toDataURL("image/jpeg", 0.85);
+}
 
-  // ===== التبويبات =====
-  function show(tab) {
-    document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === tab));
-    document.getElementById("panel-exams").hidden = tab !== "exams";
-    document.getElementById("panel-tasks").hidden = tab !== "tasks";
-    try { localStorage.setItem("tab", tab); } catch (e) {}
+// ---------- add: reading ----------
+let foundItems = [];
+const reDate = /^\d{4}-\d{2}-\d{2}$/, reTime = /^\d{2}:\d{2}$/, reDue = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+const normCode = c => String(c || "").toUpperCase().replace(/\s+/g, "").replace(/^(CPIT|CPCS|CPIS)-?(\d{3})$/, "$1-$2");
+function clean(out) {
+  const ex = (Array.isArray(out?.exams) ? out.exams : []).map(e => ({
+    code: normCode(e.code), name: String(e.name || ""), date: String(e.date || ""),
+    start: reTime.test(e.start) ? e.start : "", end: reTime.test(e.end) ? e.end : "",
+    building: String(e.building || ""), room: String(e.room || ""), hijri: String(e.hijri || ""),
+  })).filter(e => e.code && reDate.test(e.date) && (!state.courses.length || state.courses.includes(e.code)));
+  const tk = (Array.isArray(out?.tasks) ? out.tasks : []).map(t => ({
+    code: normCode(t.code), name: String(t.name || ""), title: String(t.title || "").trim(),
+    due: String(t.due || ""), grade: String(t.grade ?? ""),
+  })).filter(t => t.code && t.title && reDue.test(t.due));
+  return { ex, tk };
+}
+
+$("readBtn").onclick = async () => {
+  const text = $("textIn").value.trim();
+  if (!files.length && !text) { setStatus("ارفع صورة أو الصق نص أول", true); return; }
+  $("readBtn").disabled = true; $("found").hidden = true; $("foundActions").hidden = true;
+  const saved = {
+    exams: state.exams.map(e => ({ code: e.code, date: e.date })),
+    tasks: state.tasks.map(t => ({ code: t.code, title: t.title, due: t.due })),
+  };
+  const jobs = files.length ? files.map((f, i) => ({ file: f, text: i === 0 ? text : "" })) : [{ file: null, text }];
+  const ex = [], tk = [], notes = [];
+  let failed = 0;
+  try {
+    for (let i = 0; i < jobs.length; i++) {
+      setStatus(jobs.length > 1 ? `أقرأ الصورة ${i + 1} من ${jobs.length}...` : "أقرأ...");
+      const image = jobs[i].file ? await toDataURL(jobs[i].file) : null;
+      const r = await api("/api/read", "POST", { text: jobs[i].text, image, courses: state.courses, saved });
+      if (r.status === 401) { forgetKey(); setStatus("اكتب رمز التعديل الصحيح وجرب", true); return; }
+      if (!r.ok) { failed++; continue; }
+      const c = clean(r.data);
+      ex.push(...c.ex); tk.push(...c.tk);
+      if (r.data?.note) notes.push(r.data.note);
+    }
+    rememberKey();
+    // one entry per key (later images win)
+    const exMap = new Map(ex.map(e => [examKey(e), e])), tkMap = new Map(tk.map(t => [taskKey(t), t]));
+    foundItems = [
+      ...[...exMap.values()].map(e => ({ kind: "exams", item: e, isUpdate: state.exams.some(x => examKey(x) === examKey(e)) })),
+      ...[...tkMap.values()].map(t => ({ kind: "tasks", item: t, isUpdate: state.tasks.some(x => taskKey(x) === taskKey(t)) })),
+    ];
+    const note = [failed ? `ما قدرت أقرأ ${failed} من الصور` : "", ...notes].filter(Boolean).join(" · ");
+    if (failed === jobs.length) setStatus("ما قدرت أقرأها، جرب صورة أوضح أو الصق النص", true);
+    else showFound(note);
+  } catch (e) {
+    setStatus("ما فيه اتصال، جرب مرة ثانية", true);
+  } finally { $("readBtn").disabled = false; }
+};
+
+const sameExam = (a, b) => a && a.date === b.date && a.start === b.start && a.end === b.end && a.room === b.room;
+const sameTask = (a, b) => a && a.due === b.due && a.grade === b.grade;
+
+function showFound(note) {
+  const box = $("found"); box.innerHTML = "";
+  foundItems = foundItems.filter(f => {
+    if (!f.isUpdate) return true;
+    const cur = f.kind === "exams" ? state.exams.find(x => examKey(x) === examKey(f.item)) : state.tasks.find(x => taskKey(x) === taskKey(f.item));
+    return f.kind === "exams" ? !sameExam(cur, f.item) : !sameTask(cur, f.item);
+  });
+  if (!foundItems.length) { setStatus(note || "ما لقيت شي جديد. كل اللي فيها محفوظ عندك."); return; }
+  setStatus(`لقيت ${foundItems.length}${note ? " · " + note : ""}`);
+  foundItems.forEach((f, i) => {
+    const it = f.item;
+    const p = dparts(f.kind === "exams" ? it.date : it.due.slice(0, 10));
+    const line = f.kind === "exams"
+      ? `${p.label} · ${fmtTime(it.start)}${it.end ? " – " + fmtTime(it.end) : ""}${it.room ? ` · <span dir="ltr">${esc(it.room)}</span>` : ""}`
+      : `${p.label} · ${fmtTime(it.due.slice(11))}${it.grade ? " · الدرجة " + esc(it.grade) : ""}`;
+    const l = document.createElement("label");
+    l.innerHTML = `<input type="checkbox" id="pick${i}" checked>
+      <span><span class="kind">${f.kind === "exams" ? "اختبار" : "تسليم"}</span>
+      <div class="title">${esc(it.code)}${f.kind === "tasks" ? " · " + esc(it.title) : ""}</div>
+      <div class="meta">${line}</div></span>
+      <span class="tag ${f.isUpdate ? "upd" : ""}">${f.isUpdate ? "تحديث" : "جديد"}</span>`;
+    box.appendChild(l);
+  });
+  box.hidden = false; $("foundActions").hidden = false;
+}
+
+$("discardBtn").onclick = () => { foundItems = []; $("found").hidden = true; $("foundActions").hidden = true; setStatus(""); };
+
+$("saveBtn").onclick = async () => {
+  const picked = foundItems.filter((_, i) => $("pick" + i)?.checked);
+  if (!picked.length) { setStatus("ما اخترت شي", true); return; }
+  const next = { ...state, names: { ...(state.names || {}) }, exams: [...state.exams], tasks: [...state.tasks] };
+  for (const { kind, item } of picked) {
+    if (item.name && !next.names[item.code]) next.names[item.code] = item.name;
+    const { name, ...rest } = item;
+    const keyFn = kind === "exams" ? examKey : taskKey;
+    const i = next[kind].findIndex(x => keyFn(x) === keyFn(rest));
+    if (i >= 0) next[kind][i] = { ...next[kind][i], ...rest }; else next[kind].push(rest);
   }
-  document.querySelectorAll(".tab").forEach(b => b.addEventListener("click", () => show(b.dataset.tab)));
-  let saved = null;
-  try { saved = localStorage.getItem("tab"); } catch (e) {}
-  show(saved === "tasks" ? "tasks" : "exams");
+  $("saveBtn").disabled = true;
+  const ok = await save(next, `انحفظ ${picked.length}`);
+  $("saveBtn").disabled = false;
+  if (ok) {
+    foundItems = []; files = []; refreshThumbs(); $("textIn").value = "";
+    $("found").hidden = true; $("foundActions").hidden = true; setStatus("");
+    $("addBox").hidden = true; render();
+    showTab(picked.some(p => p.kind === "tasks") && !picked.some(p => p.kind === "exams") ? "tasks" : "exams");
+  }
+};
+
+// ---------- boot ----------
+async function boot() {
+  try {
+    const r = await fetch("/api/data", { cache: "no-store" });
+    if (r.ok && (r.headers.get("content-type") || "").includes("json")) {
+      state = await r.json(); apiOK = true;
+      needsKey = r.headers.get("x-needs-key") === "1";
+      aiOK = r.headers.get("x-ai") === "1";
+    }
+  } catch (e) {}
+  if (!apiOK) {
+    try { const r = await fetch("data.json", { cache: "no-store" }); if (r.ok) state = await r.json(); } catch (e) {}
+  }
+  state.exams ||= []; state.tasks ||= []; state.courses ||= []; state.names ||= {};
+  let hasKey = false; try { hasKey = !!localStorage.getItem("editKey"); } catch (e) {}
+  $("keyRow").hidden = !needsKey || hasKey;
+  render();
+}
+boot();
+setInterval(render, 60000);
 </script>
 </body>
 </html>
