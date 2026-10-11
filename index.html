@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>جدول اختباراتي - Mid Term</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --card: #ffffff;
+    --ink: #1c1f24;
+    --muted: #6b6f76;
+    --line: #e3ded3;
+    --accent: #0f6e5c;
+    --accent-soft: #e2f1ec;
+    --soon: #b4541a;
+    --soon-soft: #fbeadf;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14161a;
+      --card: #1d2026;
+      --ink: #eceae4;
+      --muted: #9a9ea6;
+      --line: #2c3038;
+      --accent: #5cc4a8;
+      --accent-soft: #1b3330;
+      --soon: #f0a06c;
+      --soon-soft: #3a2619;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "IBM Plex Sans Arabic", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    padding: 32px 16px 48px;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; }
+  header { margin-bottom: 28px; }
+  header p { color: var(--muted); font-size: 14px; }
+  h1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+  .next {
+    background: var(--accent);
+    color: #fff;
+    border-radius: 16px;
+    padding: 18px 20px;
+    margin-bottom: 24px;
+  }
+  .next small { opacity: .85; font-size: 13px; }
+  .next strong { display: block; font-size: 22px; margin: 2px 0; }
+  .list { display: flex; flex-direction: column; gap: 12px; }
+  .exam {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px 18px;
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+    gap: 14px;
+    align-items: center;
+  }
+  .date-box {
+    text-align: center;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 10px;
+    padding: 6px 0;
+  }
+  .date-box .d { font-size: 24px; font-weight: 700; line-height: 1.1; }
+  .date-box .m { font-size: 12px; }
+  .code { font-size: 18px; font-weight: 700; direction: ltr; text-align: right; }
+  .meta { color: var(--muted); font-size: 14px; }
+  .time { font-size: 15px; font-weight: 500; color: var(--ink); }
+  .badge {
+    font-size: 13px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .exam.soon .badge { background: var(--soon-soft); color: var(--soon); }
+  .exam.soon .date-box { background: var(--soon-soft); color: var(--soon); }
+  .exam.done { opacity: .45; }
+  .exam.done .badge { background: var(--line); color: var(--muted); }
+  footer { margin-top: 28px; color: var(--muted); font-size: 12px; text-align: center; }
+  @media (max-width: 420px) {
+    .exam { grid-template-columns: 56px 1fr; }
+    .badge { grid-column: 1 / -1; justify-self: start; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>جدول اختباراتي</h1>
+    <p>Mid Term 2027-01 · مرتبة حسب الموعد</p>
+  </header>
+
+  <div class="next" id="next"></div>
+  <div class="list" id="list"></div>
+
+  <footer>المبنى: 80A · راجع الجدول الرسمي قبل الاختبار</footer>
+</div>
+
+<script>
+  // عدّل هنا فقط: التاريخ بصيغة YYYY-MM-DD والوقت بصيغة HH:MM (24 ساعة)
+  const exams = [
+    { code: "CPIT-405", date: "2026-10-22", hijri: "11/05/1448", time: "09:00", end: "10:30", place: "80A", room: "H1-7 + H2-4" },
+    { code: "CPIT-345", date: "2026-10-25", hijri: "14/05/1448", time: "13:00", end: "14:30", place: "80A", room: "H1-3 + H2-6" },
+    { code: "CPIT-490", date: "2026-10-26", hijri: "15/05/1448", time: "13:00", end: "14:30", place: "80A", room: "H2-7" },
+    { code: "CPIT-475", date: "2026-10-27", hijri: "16/05/1448", time: "15:00", end: "16:30", place: "80A", room: "H1-3" },
+    { code: "CPIT-470", date: "2026-10-29", hijri: "18/05/1448", time: "13:00", end: "14:30", place: "80A", room: "H2-8" },
+  ];
+
+  const days = ["الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+  const months = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+
+  function fmtTime(t) {
+    if (!t) return "الوقت: يحدد لاحقاً";
+    let [h, m] = t.split(":").map(Number);
+    const p = h < 12 ? "صباحاً" : "مساءً";
+    h = h % 12 || 12;
+    return `${h}:${String(m).padStart(2,"0")} ${p}`;
+  }
+
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  const sorted = [...exams].sort((a, b) => {
+    if (!a.date) return 1; if (!b.date) return -1;
+    return (a.date + (a.time||"")).localeCompare(b.date + (b.time||""));
+  });
+
+  const list = document.getElementById("list");
+  let next = null;
+
+  sorted.forEach(e => {
+    const el = document.createElement("div");
+    el.className = "exam";
+    if (!e.date) {
+      el.innerHTML = `
+        <div class="date-box"><div class="d">?</div><div class="m">—</div></div>
+        <div><div class="code">${e.code}</div><div class="meta">الموعد غير محدد بعد</div></div>
+        <span class="badge">—</span>`;
+      list.appendChild(el); return;
+    }
+    const d = new Date(e.date + "T00:00:00");
+    const diff = Math.round((d - today) / 86400000);
+    let badge;
+    if (diff < 0) { el.classList.add("done"); badge = "انتهى"; }
+    else if (diff === 0) { el.classList.add("soon"); badge = "اليوم"; }
+    else if (diff === 1) { el.classList.add("soon"); badge = "بكرة"; }
+    else { if (diff <= 3) el.classList.add("soon"); badge = `بعد ${diff} يوم`; }
+    if (diff >= 0 && !next) next = { ...e, d, diff };
+
+    el.innerHTML = `
+      <div class="date-box"><div class="d">${d.getDate()}</div><div class="m">${months[d.getMonth()]}</div></div>
+      <div>
+        <div class="code">${e.code}</div>
+        <div class="meta">${days[d.getDay()]} ${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()} · ${e.hijri}هـ</div>
+        <div class="time">${fmtTime(e.time)} – ${fmtTime(e.end)}</div>
+        <div class="meta">مبنى ${e.place} · <span dir="ltr">${e.room}</span></div>
+      </div>
+      <span class="badge">${badge}</span>`;
+    list.appendChild(el);
+  });
+
+  const n = document.getElementById("next");
+  if (next) {
+    const when = next.diff === 0 ? "اليوم" : next.diff === 1 ? "بكرة" : `بعد ${next.diff} يوم`;
+    n.innerHTML = `<small>الاختبار الجاي · ${when}</small>
+      <strong>${next.code}</strong>
+      <small>${days[next.d.getDay()]} ${next.d.getDate()} ${months[next.d.getMonth()]} · ${fmtTime(next.time)} – ${fmtTime(next.end)} · <span dir="ltr">${next.room}</span></small>`;
+  } else {
+    n.innerHTML = `<strong>خلصت الاختبارات 🎉</strong>`;
+  }
+</script>
+</body>
+</html>
