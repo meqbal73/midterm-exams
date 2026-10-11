@@ -74,6 +74,42 @@
   .code { font-size: 18px; font-weight: 700; direction: ltr; text-align: right; }
   .meta { color: var(--muted); font-size: 14px; }
   .time { font-size: 15px; font-weight: 500; color: var(--ink); }
+  .cname { font-size: 13px; color: var(--muted); margin-bottom: 2px; }
+  .task-title { font-size: 16px; font-weight: 700; }
+  .tabs {
+    display: flex;
+    gap: 6px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 20px;
+  }
+  .tab {
+    flex: 1;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    padding: 10px;
+    border-radius: 9px;
+    cursor: pointer;
+  }
+  .tab[aria-selected="true"] { background: var(--accent); color: #fff; }
+  .count {
+    display: inline-block;
+    min-width: 20px;
+    font-size: 12px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: var(--soon);
+    color: #fff;
+    margin-inline-start: 4px;
+  }
+  .count:empty { display: none; }
+  .panel[hidden] { display: none; }
   .badge {
     font-size: 13px;
     font-weight: 500;
@@ -97,14 +133,26 @@
 <body>
 <div class="wrap">
   <header>
-    <h1>جدول اختباراتي</h1>
-    <p>Mid Term 2027-01 · مرتبة حسب الموعد</p>
+    <h1>جدولي</h1>
+    <p>الفصل الأول 2027-01 · مرتب حسب الموعد</p>
   </header>
 
-  <div class="next" id="next"></div>
-  <div class="list" id="list"></div>
+  <nav class="tabs" role="tablist">
+    <button class="tab" role="tab" data-tab="exams">الاختبارات</button>
+    <button class="tab" role="tab" data-tab="tasks">التسليمات <span class="count" id="taskCount"></span></button>
+  </nav>
 
-  <footer>المبنى: 80A · راجع الجدول الرسمي قبل الاختبار</footer>
+  <section class="panel" id="panel-exams">
+    <div class="next" id="next"></div>
+    <div class="list" id="list"></div>
+    <footer>المبنى: 80A · الجدول نسخة مبدئية (Draft)، راجع الجدول الرسمي قبل الاختبار</footer>
+  </section>
+
+  <section class="panel" id="panel-tasks">
+    <div class="next" id="nextTask"></div>
+    <div class="list" id="taskList"></div>
+    <footer>المصدر: Blackboard · بتوقيت السعودية</footer>
+  </section>
 </div>
 
 <script>
@@ -178,6 +226,88 @@
   } else {
     n.innerHTML = `<strong>خلصت الاختبارات 🎉</strong>`;
   }
+
+  // ===== التسليمات =====
+  // due بصيغة YYYY-MM-DDTHH:MM (بتوقيت السعودية)
+  const tasks = [
+    { code: "CPIT-475", title: "New Assignment", due: "2026-10-12T23:59" },
+    { code: "CPIT-470", title: "LAB-4-Ch6", grade: "2.5", due: "2026-10-15T23:59" },
+    { code: "CPIT-490", title: "LAB3-M3",  grade: "4",   due: "2026-10-18T23:59" },
+    { code: "CPIT-405", title: "Lab 5",                  due: "2026-10-21T10:00" },
+    { code: "CPIT-405", title: "Lab 6",                  due: "2026-10-28T10:00" },
+  ];
+
+  const names = {
+    "CPIT-405": "تطبيقات الشبكة البينية",
+    "CPIT-470": "إدارة الشبكات",
+    "CPIT-475": "شبكات البيانات اللاسلكية",
+    "CPIT-490": "مواضيع مختارة في تقنية المعلومات",
+  };
+
+  // أسماء المواد في بطاقات الاختبارات
+  document.querySelectorAll("#list .code").forEach(c => {
+    const nm = names[c.textContent.trim()];
+    if (nm) c.insertAdjacentHTML("beforebegin", `<div class="cname">${nm}</div>`);
+  });
+
+  const now = new Date();
+  const taskList = document.getElementById("taskList");
+  let nextTask = null, pending = 0;
+
+  function leftText(ms) {
+    const h = Math.floor(ms / 3600000);
+    if (h < 1) return `باقي ${Math.max(1, Math.floor(ms / 60000))} دقيقة`;
+    if (h < 48) return `باقي ${h} ساعة`;
+    return `باقي ${Math.floor(h / 24)} يوم`;
+  }
+
+  [...tasks].sort((a, b) => a.due.localeCompare(b.due)).forEach(t => {
+    const d = new Date(t.due + ":00+03:00");
+    const ms = d - now;
+    const el = document.createElement("div");
+    el.className = "exam";
+    let badge;
+    if (ms < 0) { el.classList.add("done"); badge = "انتهى"; }
+    else {
+      pending++;
+      if (ms < 3 * 86400000) el.classList.add("soon");
+      badge = leftText(ms);
+      if (!nextTask) nextTask = { ...t, d, ms };
+    }
+    const [hh, mm] = t.due.slice(11).split(":");
+    el.innerHTML = `
+      <div class="date-box"><div class="d">${d.getDate()}</div><div class="m">${months[d.getMonth()]}</div></div>
+      <div>
+        <div class="cname">${names[t.code] || ""}</div>
+        <div class="task-title" dir="ltr" style="text-align:right">${t.code} · ${t.title}</div>
+        <div class="meta">${days[d.getDay()]} ${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()}</div>
+        <div class="time">آخر موعد: ${fmtTime(hh + ":" + mm)}${t.grade ? ` · <span class="meta">الدرجة ${t.grade}</span>` : ""}</div>
+      </div>
+      <span class="badge">${badge}</span>`;
+    taskList.appendChild(el);
+  });
+
+  document.getElementById("taskCount").textContent = pending || "";
+  const nt = document.getElementById("nextTask");
+  if (nextTask) {
+    nt.innerHTML = `<small>التسليم الجاي · ${leftText(nextTask.ms)}</small>
+      <strong dir="ltr" style="text-align:right">${nextTask.code} · ${nextTask.title}</strong>
+      <small>${days[nextTask.d.getDay()]} ${nextTask.d.getDate()} ${months[nextTask.d.getMonth()]} · ${fmtTime(nextTask.due.slice(11))}</small>`;
+  } else {
+    nt.innerHTML = `<strong>ما عليك تسليمات 🎉</strong>`;
+  }
+
+  // ===== التبويبات =====
+  function show(tab) {
+    document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === tab));
+    document.getElementById("panel-exams").hidden = tab !== "exams";
+    document.getElementById("panel-tasks").hidden = tab !== "tasks";
+    try { localStorage.setItem("tab", tab); } catch (e) {}
+  }
+  document.querySelectorAll(".tab").forEach(b => b.addEventListener("click", () => show(b.dataset.tab)));
+  let saved = null;
+  try { saved = localStorage.getItem("tab"); } catch (e) {}
+  show(saved === "tasks" ? "tasks" : "exams");
 </script>
 </body>
 </html>
