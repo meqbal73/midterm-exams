@@ -174,7 +174,7 @@
 
   <nav class="tabs" role="tablist">
     <button class="tab" role="tab" id="tab-exams" data-tab="exams">الاختبارات</button>
-    <button class="tab" role="tab" id="tab-tasks" data-tab="tasks">التسليمات <span class="count" id="taskCount"></span></button>
+    <button class="tab" role="tab" id="tab-tasks" data-tab="tasks">التكاليف <span class="count" id="taskCount"></span></button>
   </nav>
 
   <section id="panel-exams">
@@ -240,7 +240,7 @@ const delButton = (kind, key) => apiOK ? `<button class="del" data-kind="${kind}
 
 function renderExams() {
   const list = $("examList"); list.innerHTML = "";
-  const items = [...state.exams].sort((a, b) => (a.date + a.start).localeCompare(b.date + b.start));
+  const items = [...state.exams].filter(e => riyadh(e.date + "T" + (e.end || "23:59")) >= Date.now()).sort((a, b) => (a.date + a.start).localeCompare(b.date + b.start));
   let next = null;
   if (!items.length) list.innerHTML = `<div class="empty">ما فيه اختبارات محفوظة. أضفها من صورة الجدول.</div>`;
   for (const e of items) {
@@ -275,9 +275,9 @@ function renderExams() {
 
 function renderTasks() {
   const list = $("taskList"); list.innerHTML = "";
-  const items = [...state.tasks].sort((a, b) => a.due.localeCompare(b.due));
+  const items = [...state.tasks].filter(t => riyadh(t.due) >= Date.now()).sort((a, b) => a.due.localeCompare(b.due));
   let next = null, pending = 0;
-  if (!items.length) list.innerHTML = `<div class="empty">ما فيه تسليمات محفوظة. أضفها من صورة Blackboard.</div>`;
+  if (!items.length) list.innerHTML = `<div class="empty">ما فيه تكاليف محفوظة. أضفها من صورة Blackboard.</div>`;
   for (const t of items) {
     const ms = riyadh(t.due) - Date.now();
     const p = dparts(t.due.slice(0, 10));
@@ -299,9 +299,9 @@ function renderTasks() {
   }
   $("taskCount").textContent = pending || "";
   $("nextTask").innerHTML = next
-    ? `<small>التسليم الجاي · ${leftText(next.ms)}</small><strong dir="ltr" style="text-align:right">${esc(next.t.code)} · ${esc(next.t.title)}</strong>
+    ? `<small>التكليف الجاي · ${leftText(next.ms)}</small><strong dir="ltr" style="text-align:right">${esc(next.t.code)} · ${esc(next.t.title)}</strong>
        <small>${DAYS[next.p.wd]} ${next.p.d} ${MONTHS[next.p.m - 1]} · ${fmtTime(next.t.due.slice(11))}</small>`
-    : `<strong>ما عليك تسليمات جاية</strong>`;
+    : `<strong>ما عليك تكاليف جاية</strong>`;
 }
 
 // ---------- tabs ----------
@@ -481,7 +481,7 @@ function showFound(note) {
       : `${p.label} · ${fmtTime(it.due.slice(11))}${it.grade ? " · الدرجة " + esc(it.grade) : ""}`;
     const l = document.createElement("label");
     l.innerHTML = `<input type="checkbox" id="pick${i}" checked>
-      <span><span class="kind">${f.kind === "exams" ? "اختبار" : "تسليم"}</span>
+      <span><span class="kind">${f.kind === "exams" ? "اختبار" : "تكليف"}</span>
       <div class="title">${esc(it.code)}${f.kind === "tasks" ? " · " + esc(it.title) : ""}</div>
       <div class="meta">${line}</div></span>
       <span class="tag ${f.isUpdate ? "upd" : ""}">${f.isUpdate ? "تحديث" : "جديد"}</span>`;
